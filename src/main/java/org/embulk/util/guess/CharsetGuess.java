@@ -30,11 +30,12 @@ import org.embulk.util.config.ConfigMapperFactory;
  * @see <a href="https://github.com/embulk/embulk/blob/v0.10.19/embulk-core/src/main/ruby/embulk/guess/charset.rb">charset.rb</a>
  */
 public final class CharsetGuess {
-    private CharsetGuess() {
+    private CharsetGuess(final ConfigMapperFactory configMapperFactory) {
+        this.configMapperFactory = configMapperFactory;
     }
 
-    public static CharsetGuess of() {
-        return new CharsetGuess();
+    public static CharsetGuess of(final ConfigMapperFactory configMapperFactory) {
+        return new CharsetGuess(configMapperFactory);
     }
 
     /**
@@ -44,7 +45,7 @@ public final class CharsetGuess {
      * @param configMapperFactory  {@link org.embulk.util.config.ConfigMapperFactory} for a new {@link org.embulk.config.ConfigDiff}
      * @return {@link org.embulk.config.ConfigDiff} guessed
      */
-    public ConfigDiff guess(final Buffer sample, final ConfigMapperFactory configMapperFactory) {
+    public ConfigDiff guess(final Buffer sample) {
         final CharsetDetector detector = new CharsetDetector();
 
         final int sampleLength = sample.limit();
@@ -55,14 +56,14 @@ public final class CharsetGuess {
 
         final CharsetMatch bestMatch = detector.detect();
 
-        final ConfigDiff charset = configMapperFactory.newConfigDiff();
+        final ConfigDiff charset = this.configMapperFactory.newConfigDiff();
         if (bestMatch.getConfidence() < 50) {
             charset.set("charset", "UTF-8");
         } else {
             charset.set("charset", convertPredefined(bestMatch.getName()));
         }
 
-        final ConfigDiff result = configMapperFactory.newConfigDiff();
+        final ConfigDiff result = this.configMapperFactory.newConfigDiff();
         result.setNested("parser", charset);
         return result;
     }
@@ -83,4 +84,6 @@ public final class CharsetGuess {
                 return before;
         }
     }
+
+    private final ConfigMapperFactory configMapperFactory;
 }

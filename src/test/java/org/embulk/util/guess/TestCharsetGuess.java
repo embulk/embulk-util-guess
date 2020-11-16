@@ -33,9 +33,9 @@ public class TestCharsetGuess {
     }
 
     private static void assertCharset(final String expectedCharset, final byte[] sample) {
-        final ConfigDiff configDiff = CharsetGuess.of().guess(new FakeBufferImpl(sample), configMapperFactory);
+        final ConfigDiff configDiff = CharsetGuess.of(CONFIG_MAPPER_FACTORY).guess(new FakeBufferImpl(sample));
         assertEquals(expectedCharset, configDiff.getNested("parser").get(String.class, "charset"));
     }
 
-    private static final ConfigMapperFactory configMapperFactory = ConfigMapperFactory.withDefault();
+    private static final ConfigMapperFactory CONFIG_MAPPER_FACTORY = ConfigMapperFactory.withDefault();
 }
