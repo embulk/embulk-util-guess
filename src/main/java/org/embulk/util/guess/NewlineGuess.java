@@ -29,12 +29,13 @@ import org.embulk.util.config.ConfigMapperFactory;
  * @see <a href="https://github.com/embulk/embulk/blob/v0.10.19/embulk-core/src/main/ruby/embulk/guess/newline.rb">newline.rb</a>
  */
 public final class NewlineGuess {
-    private NewlineGuess() {
-        this.charsetGuess = CharsetGuess.of();
+    private NewlineGuess(final ConfigMapperFactory configMapperFactory) {
+        this.configMapperFactory = configMapperFactory;
+        this.charsetGuess = CharsetGuess.of(configMapperFactory);
     }
 
-    public static NewlineGuess of() {
-        return new NewlineGuess();
+    public static NewlineGuess of(final ConfigMapperFactory configMapperFactory) {
+        return new NewlineGuess(configMapperFactory);
     }
 
     /**
@@ -42,12 +43,11 @@ public final class NewlineGuess {
      *
      * @param config  a partial config which it starts guessing from
      * @param sample  the byte sequence to be guessed
-     * @param configMapperFactory  {@link org.embulk.util.config.ConfigMapperFactory} for a new {@link org.embulk.config.ConfigDiff}
      * @return {@link org.embulk.config.ConfigDiff} guessed
      */
-    public ConfigDiff guess(final ConfigSource config, final Buffer sample, final ConfigMapperFactory configMapperFactory) {
+    public ConfigDiff guess(final ConfigSource config, final Buffer sample) {
         if (!config.getNestedOrGetEmpty("parser").has("charset")) {
-            return this.charsetGuess.guess(sample, configMapperFactory);
+            return this.charsetGuess.guess(sample);
         }
 
         final int sampleLength = sample.limit();
@@ -97,5 +97,6 @@ public final class NewlineGuess {
     private static final byte[] CR = { (byte) '\r' };
     private static final byte[] LF = { (byte) '\n' };
 
+    private final ConfigMapperFactory configMapperFactory;
     private final CharsetGuess charsetGuess;
 }

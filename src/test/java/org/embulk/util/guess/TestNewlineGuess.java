@@ -43,7 +43,7 @@ public class TestNewlineGuess {
         parserConfig.set("charset", charset);
         final ConfigSource config = configMapperFactory.newConfigSource();
         config.setNested("parser", parserConfig);
-        final ConfigDiff configDiff = NewlineGuess.of().guess(config, new FakeBufferImpl(sample), configMapperFactory);
+        final ConfigDiff configDiff = NewlineGuess.of(configMapperFactory).guess(config, new FakeBufferImpl(sample));
         assertEquals(expectedNewline, configDiff.getNested("parser").get(String.class, "newline"));
     }
 
