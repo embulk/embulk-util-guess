@@ -45,6 +45,9 @@ java {
 javadoc {
     title = "${project.name} v${project.version}"
 
+    // "timeformat" classes are intentionally undocumented while some are public classes to be accessed from org.embulk.util.guess.
+    exclude "org/embulk/util/guess/timeformat/*.java"
+
     options {
         locale = "en_US"
         encoding = "UTF-8"
