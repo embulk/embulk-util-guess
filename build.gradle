@@ -25,6 +25,8 @@ repositories {
 dependencies {
     compileOnly "org.embulk:embulk-api:0.10.19"
     api "org.embulk:embulk-util-config:0.1.4"
+    api "org.embulk:embulk-util-file:0.1.1"
+    api "org.embulk:embulk-util-text:0.1.0"
     implementation "com.ibm.icu:icu4j:54.1.1"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.6.7"
     implementation "com.fasterxml.jackson.core:jackson-core:2.6.7"
