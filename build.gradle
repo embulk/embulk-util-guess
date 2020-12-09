@@ -124,9 +124,9 @@ publishing {
                 }
 
                 scm {
-                    connection = "scm:git:git://github.com/embulk/embulk-util-config.git"
-                    developerConnection = "scm:git:git@github.com:embulk/embulk-util-config.git"
-                    url = "https://github.com/embulk/embulk-util-config"
+                    connection = "scm:git:git://github.com/embulk/embulk-util-guess.git"
+                    developerConnection = "scm:git:git@github.com:embulk/embulk-util-guess.git"
+                    url = "https://github.com/embulk/embulk-util-guess"
                 }
             }
         }
