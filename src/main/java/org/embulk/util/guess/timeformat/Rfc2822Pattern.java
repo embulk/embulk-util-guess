@@ -47,16 +47,14 @@ final class Rfc2822Pattern implements TimeFormatPattern {
                 format.append(":%S");
             }
             if (matcher.group("zoneOff") != null && !matcher.group("zoneOff").isEmpty()) {
-                if (matcher.group("zoneOff") != null && matcher.group("zoneOff").contains(":")) {
+                if (matcher.group("zoneOff").contains(":")) {
                     format.append(" %:z");
                 } else {
                     format.append(" %z");
                 }
             } else if (matcher.group("zoneAbb") != null && !matcher.group("zoneAbb").isEmpty()) {
                 // don't use %Z: https://github.com/jruby/jruby/issues/3702
-                if (matcher.group("zoneAbb") != null && !matcher.group("zoneAbb").isEmpty()) {
-                    format.append(" %z");
-                }
+                format.append(" %z");
             }
             return new SimpleMatch(format.toString());
         }
