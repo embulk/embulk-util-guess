@@ -19,10 +19,57 @@ package org.embulk.util.guess.timeformat;
 /**
  * @see <a href="https://github.com/embulk/embulk/blob/v0.10.19/embulk-core/src/main/ruby/embulk/guess/time_format_guess.rb#L3-L22">time_format_guess.rb</a>
  */
-class Parts {
+final class Parts {
     private Parts() {
         // No instantiation.
     }
+
+    /**
+     * <pre>{@code YEAR = /[1-4][0-9]{3}/}</pre>
+     */
+    static final String YEAR = "[1-4][0-9]{3}";
+
+    /**
+     * <pre>{@code MONTH         = /10|11|12|[0 ]?[0-9]/}</pre>
+     */
+    static final String MONTH = "10|11|12|[0 ]?[0-9]";
+
+    /**
+     * <pre>{@code MONTH_NODELIM = /10|11|12|[0][0-9]/}</pre>
+     */
+    static final String MONTH_NODELIM = "10|11|12|[0][0-9]";
+
+    /**
+     * <pre>{@code DAY         = /31|30|[1-2][0-9]|[0 ]?[1-9]/}</pre>
+     */
+    static final String DAY = "31|30|[1-2][0-9]|[0 ]?[1-9]";
+
+    /**
+     * <pre>{@code DAY_NODELIM = /31|30|[1-2][0-9]|[0][1-9]/}</pre>
+     */
+    static final String DAY_NODELIM = "31|30|[1-2][0-9]|[0][1-9]";
+
+    /**
+     * <pre>{@code HOUR         = /20|21|22|23|24|1[0-9]|[0 ]?[0-9]/}</pre>
+     */
+    static final String HOUR = "20|21|22|23|24|1[0-9]|[0 ]?[0-9]";
+
+    /**
+     * <pre>{@code HOUR_NODELIM = /20|21|22|23|24|1[0-9]|[0][0-9]/}</pre>
+     */
+    static final String HOUR_NODELIM = "20|21|22|23|24|1[0-9]|[0][0-9]";
+
+    /**
+     * <pre>{@code MINUTE         = SECOND         = /60|[1-5][0-9]|[0 ]?[0-9]/}</pre>
+     */
+    static final String MINUTE = "60|[1-5][0-9]|[0 ]?[0-9]";
+    static final String SECOND = MINUTE;
+
+    /**
+     * <pre>{@code MINUTE_NODELIM = SECOND_NODELIM = /60|[1-5][0-9]|[0][0-9]/}</pre>
+     */
+    static final String MINUTE_NODELIM = "60|[1-5][0-9]|[0][0-9]";
+    static final String SECOND_NODELIM = MINUTE_NODELIM;
 
     /**
      * <pre>{@code MONTH_NAME_SHORT = /Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec/}</pre>

@@ -45,7 +45,7 @@ public final class ExpectedPatterns {
             "^%s %s \\d\\d? \\d\\d:\\d\\d:\\d\\d \\d\\d\\d\\d$", WEEKDAY_NAME_SHORT, MONTH_NAME_SHORT));
 
     public static final TimeFormatPattern[] PATTERNS = {
-        // TODO: Implement GuessPattern().
+        new GuessPattern(),
 
         new Rfc2822Pattern(),
 
