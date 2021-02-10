@@ -282,7 +282,7 @@ public final class SchemaGuess {
     }
 
     private static final Pattern DOUBLE_PATTERN = Pattern.compile(
-            "/^[+-]?(NaN|Infinity|([1-9]\\d*|0)(\\.\\d+)([eE][+-]?\\d+)?[fFdD]?)$/");
+            "^[+-]?(NaN|Infinity|([1-9]\\d*|0)(\\.\\d+)([eE][+-]?\\d+)?[fFdD]?)$");
 
     // taken from CsvParserPlugin.TRUE_STRINGS
     private static final String[] TRUE_STRINGS_ARRAY = {
