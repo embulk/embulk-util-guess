@@ -135,6 +135,30 @@ public final class SchemaGuess {
             return this.formatOrTimeValue;
         }
 
+        /**
+         * Returns {@code true} if just its type is the same with another object's.
+         *
+         * <p>Note that it does not take care of {@code formatOrTimeValue}. It returns {@code true} if
+         * both are {@code "timestamp"}, even if their {@code formatOrTimeValue}s are different.
+         *
+         * <p>It is expected to be called only from {@code mergeType} which should merge {@code "timestamp"}
+         * and {@code "timestamp"} into {@code "timestamp"}, even if their {@code formatOrTimeValue}s are
+         * different. Those {@code formatOrTimeValue}s are considered in {@code mergeTypes} later.
+         */
+        boolean typeEquals(final Object otherObject) {
+            if (!(otherObject instanceof GuessedType)) {
+                return false;
+            }
+            final GuessedType other = (GuessedType) otherObject;
+            return Objects.equals(this.string, other.string);
+        }
+
+        /**
+         * Returns {@code true} if its type and {@code formatOrTimeValue} are the same with another object's.
+         *
+         * <p>Note that it takes care of {@code formatOrTimeValue}. This equality is used out of {@code SchemaGuess},
+         * in {@code CSVGuessPlugin} to compare lists of {@code GuessedType}s.
+         */
         @Override
         public boolean equals(final Object otherObject) {
             if (!(otherObject instanceof GuessedType)) {
@@ -260,7 +284,7 @@ public final class SchemaGuess {
             return type2;
         } else if (type2 == null) {
             return type1;
-        } else if (type1.equals(type2)) {
+        } else if (type1.typeEquals(type2)) {
             return type1;
         } else {
             return coalesceType(type1, type2);
