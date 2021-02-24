@@ -193,6 +193,10 @@ public final class SchemaGuess {
     }
 
     private GuessedType guessType(final Object value) {
+        if (value == null) {
+            return null;
+        }
+
         if (value instanceof Map || value instanceof List) {
             return GuessedType.JSON;
         }
