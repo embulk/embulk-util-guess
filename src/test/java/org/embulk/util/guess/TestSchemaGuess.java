@@ -111,6 +111,27 @@ public class TestSchemaGuess {
         // Not testing timestamp format.
     }
 
+    @Test
+    public void testCoalesce4SoLong() {
+        final LinkedHashMap<String, Object> record1 = new LinkedHashMap<>();
+        record1.put("a", "9223372036854775807");
+        final LinkedHashMap<String, Object> record2 = new LinkedHashMap<>();
+        record2.put("a", "9223372036854775807");
+        final LinkedHashMap<String, Object> record3 = new LinkedHashMap<>();
+        record3.put("a", "9223372036854775807");
+        final ArrayList<LinkedHashMap<String, Object>> records = new ArrayList<>();
+        records.add(record1);
+        records.add(record2);
+        records.add(record3);
+
+        final List<ConfigDiff> guessed = fromLinkedHashMap(records);
+        assertEquals(1, guessed.size());
+        assertEquals("0", guessed.get(0).get(String.class, "index"));
+        assertEquals(0, guessed.get(0).get(int.class, "index"));
+        assertEquals("a", guessed.get(0).get(String.class, "name"));
+        assertEquals("long", guessed.get(0).get(String.class, "type"));
+    }
+
     @ParameterizedTest
     @CsvSource({
             "true",

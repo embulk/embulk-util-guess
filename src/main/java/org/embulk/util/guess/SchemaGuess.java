@@ -235,7 +235,7 @@ public final class SchemaGuess {
         }
 
         try {
-            if (Integer.valueOf(str).toString().equals(str)) {
+            if (Long.valueOf(str).toString().equals(str)) {
                 return GuessedType.LONG;
             }
         } catch (final RuntimeException ex) {
