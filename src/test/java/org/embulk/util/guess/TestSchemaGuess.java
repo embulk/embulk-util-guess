@@ -53,6 +53,22 @@ public class TestSchemaGuess {
     }
 
     @Test
+    public void testQuotedStrings() {
+        final LinkedHashMap<String, Object> record = new LinkedHashMap<>();
+        record.put("a", "\"string1\"");
+        record.put("a", "\"string2\"");
+        final ArrayList<LinkedHashMap<String, Object>> records = new ArrayList<>();
+        records.add(record);
+
+        final List<ConfigDiff> guessed = fromLinkedHashMap(records);
+        assertEquals(1, guessed.size());
+        assertEquals("0", guessed.get(0).get(String.class, "index"));
+        assertEquals(0, guessed.get(0).get(int.class, "index"));
+        assertEquals("a", guessed.get(0).get(String.class, "name"));
+        assertEquals("string", guessed.get(0).get(String.class, "type"));
+    }
+
+    @Test
     public void testCoalesce1() {
         final LinkedHashMap<String, Object> record1 = new LinkedHashMap<>();
         record1.put("a", "20160101");
