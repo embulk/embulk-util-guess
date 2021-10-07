@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.OptionalInt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class GuessMatch implements TimeFormatMatch {
     GuessMatch(
@@ -192,7 +194,13 @@ final class GuessMatch implements TimeFormatMatch {
         final List<GuessOption> anotherPartOptions = another.getPartOptions();
 
         for (int i = 0; i < this.partOptions.size(); i++) {
-            if (this.partOptions.get(i) == null) {
+            final GuessOption option = this.partOptions.get(i);
+            if (option == null || option == GuessOption.NIL) {
+                if (option == null) {
+                    logger.warn("GuessMatch.partOptions unexpectedly contains null instead of GuessOption.NIL.",
+                                new NullPointerException(
+                                        "GuessMatch.partOptions unexpectedly contains null instead of GuessOption.NIL."));
+                }
                 this.partOptions.set(i, anotherPartOptions.get(i));
             }
 
@@ -264,6 +272,8 @@ final class GuessMatch implements TimeFormatMatch {
         }
         return String.format("GuessMatch[%s]", builder.toString());
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(GuessMatch.class);
 
     private static final List<GuessPart> DMY_SEQUENCE = Arrays.asList(GuessPart.DAY, GuessPart.MONTH, GuessPart.YEAR);
     private static final List<GuessPart> MDY_SEQUENCE = Arrays.asList(GuessPart.MONTH, GuessPart.DAY, GuessPart.YEAR);

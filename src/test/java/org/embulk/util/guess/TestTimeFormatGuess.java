@@ -200,6 +200,16 @@ public class TestTimeFormatGuess {
         assertEquals("bar", TimeFormatGuess.mergeMostFrequentMatches(Arrays.asList(matches2)).getFormat());
     }
 
+    @Test
+    public void testMergeTimeFormat() {
+        assertGuess(
+                "%Y-%m-%d %k:%M:%S",
+                "2021-12-1 24:30:30",
+                "2021-12-1  4:30:30",
+                "2021-12-1 24:30:30",
+                "2021-12-1 24:30:30");
+    }
+
     private static class FakeMatch implements TimeFormatMatch {
         FakeMatch(final String format) {
             this.format = format;
