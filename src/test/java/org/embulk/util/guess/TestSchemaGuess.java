@@ -148,6 +148,28 @@ public class TestSchemaGuess {
         assertEquals("long", guessed.get(0).get(String.class, "type"));
     }
 
+    @Test
+    public void testCoalesce5TimestampNullFormat() {
+        final LinkedHashMap<String, Object> record1 = new LinkedHashMap<>();
+        record1.put("a", "2016-01-01T12:34:56");
+        final LinkedHashMap<String, Object> record2 = new LinkedHashMap<>();
+        record2.put("a", null);
+        final LinkedHashMap<String, Object> record3 = new LinkedHashMap<>();
+        record3.put("a", "2016-03-04T12:34:56");
+        final ArrayList<LinkedHashMap<String, Object>> records = new ArrayList<>();
+        records.add(record1);
+        records.add(record2);
+        records.add(record3);
+
+        final List<ConfigDiff> guessed = fromLinkedHashMap(records);
+        assertEquals(1, guessed.size());
+        assertEquals("0", guessed.get(0).get(String.class, "index"));
+        assertEquals(0, guessed.get(0).get(int.class, "index"));
+        assertEquals("a", guessed.get(0).get(String.class, "name"));
+        assertEquals("timestamp", guessed.get(0).get(String.class, "type"));
+        assertEquals("%Y-%m-%dT%H:%M:%S", guessed.get(0).get(String.class, "format"));
+    }
+
     @ParameterizedTest
     @CsvSource({
             "true",
