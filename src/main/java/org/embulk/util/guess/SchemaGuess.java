@@ -304,7 +304,7 @@ public final class SchemaGuess {
         if (t.isTimestamp()) {
             final String format = this.timeFormatGuess.guess(
                     types.stream()
-                            .map(type -> type.isTimestamp() ? type.getFormatOrTimeValue() : null)
+                            .map(type -> (type != null && type.isTimestamp()) ? type.getFormatOrTimeValue() : null)
                             .filter(type -> type != null)
                             .collect(Collectors.toList()));
             return GuessedType.timestamp(format);
