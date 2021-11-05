@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -79,7 +78,7 @@ public final class SchemaGuess {
     }
 
     /**
-     * Guesses a schema from a list of sample records in {@link java.util.LinkedHashMap}s.
+     * Guesses a schema from a list of sample records in {@link java.util.List}s.
      *
      * <p>It returns a list of {@link org.embulk.config.ConfigDiff} in contrast to the original Ruby method returning
      * {@link org.embulk.spi.Schema},
@@ -89,7 +88,7 @@ public final class SchemaGuess {
      * @return a list of {@link org.embulk.config.ConfigDiff}s of the schema guessed
      */
     public List<ConfigDiff> fromListRecords(final List<String> columnNames, final List<List<Object>> samples) {
-        final List<GuessedType> columnTypes = typesFromListRecords(samples);
+        final List<GuesstimatedType> columnTypes = typesFromListRecords(samples);
         if (columnNames.size() != columnTypes.size()) {
             throw new IllegalArgumentException("The number of column names are different from actual sample data.");
         }
@@ -98,7 +97,7 @@ public final class SchemaGuess {
 
         final int size = columnNames.size();
         for (int i = 0; i < size; ++i) {
-            final GuessedType type = columnTypes.get(i);
+            final GuesstimatedType type = columnTypes.get(i);
             final String name = columnNames.get(i);
 
             final ConfigDiff column = this.configMapperFactory.newConfigDiff();
@@ -114,95 +113,20 @@ public final class SchemaGuess {
         return Collections.unmodifiableList(columns);
     }
 
-    private static class GuessedType implements Comparable<GuessedType> {
-        private GuessedType(final String string, final String formatOrTimeValue) {
-            this.string = string;
-            this.formatOrTimeValue = formatOrTimeValue;
-        }
-
-        private GuessedType(final String string) {
-            this(string, null);
-        }
-
-        static GuessedType timestamp(final String formatOrTimeValue) {
-            return new GuessedType("timestamp", formatOrTimeValue);
-        }
-
-        boolean isTimestamp() {
-            return this.string.equals("timestamp");
-        }
-
-        String getFormatOrTimeValue() {
-            return this.formatOrTimeValue;
-        }
-
-        /**
-         * Returns {@code true} if just its type is the same with another object's.
-         *
-         * <p>Note that it does not take care of {@code formatOrTimeValue}. It returns {@code true} if
-         * both are {@code "timestamp"}, even if their {@code formatOrTimeValue}s are different.
-         *
-         * <p>It is expected to be called only from {@code mergeType} which should merge {@code "timestamp"}
-         * and {@code "timestamp"} into {@code "timestamp"}, even if their {@code formatOrTimeValue}s are
-         * different. Those {@code formatOrTimeValue}s are considered in {@code mergeTypes} later.
-         */
-        boolean typeEquals(final Object otherObject) {
-            if (!(otherObject instanceof GuessedType)) {
-                return false;
-            }
-            final GuessedType other = (GuessedType) otherObject;
-            return Objects.equals(this.string, other.string);
-        }
-
-        /**
-         * Returns {@code true} if its type and {@code formatOrTimeValue} are the same with another object's.
-         *
-         * <p>Note that it takes care of {@code formatOrTimeValue}. This equality is used out of {@code SchemaGuess},
-         * in {@code CSVGuessPlugin} to compare lists of {@code GuessedType}s.
-         */
-        @Override
-        public boolean equals(final Object otherObject) {
-            if (!(otherObject instanceof GuessedType)) {
-                return false;
-            }
-            final GuessedType other = (GuessedType) otherObject;
-            return Objects.equals(this.string, other.string) && Objects.equals(this.formatOrTimeValue, other.formatOrTimeValue);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(this.string, this.formatOrTimeValue);
-        }
-
-        @Override
-        public int compareTo(final GuessedType other) {
-            if (this.formatOrTimeValue != null && other.formatOrTimeValue != null) {
-                return this.formatOrTimeValue.compareTo(other.formatOrTimeValue);
-            }
-            return this.string.compareTo(other.string);
-        }
-
-        @Override
-        public String toString() {
-            return this.string;
-        }
-
-        static final GuessedType BOOLEAN = new GuessedType("boolean");
-        static final GuessedType DOUBLE = new GuessedType("double");
-        static final GuessedType JSON = new GuessedType("json");
-        static final GuessedType LONG = new GuessedType("long");
-        static final GuessedType STRING = new GuessedType("string");
-
-        private final String string;
-        private final String formatOrTimeValue;
-    }
-
-    private List<GuessedType> typesFromListRecords(final List<List<Object>> samples) {
+    /**
+     * Guesses types from a list of sample records in {@link java.util.List}s.
+     *
+     * <p>It returns a list of {@link GuesstimatedType}.
+     *
+     * @param samples  a list of sample data
+     * @return a list of {@link GuesstimatedType}s
+     */
+    public List<GuesstimatedType> typesFromListRecords(final List<List<Object>> samples) {
         final int maxRecords = samples.stream().mapToInt(List::size).max().orElse(0);
         if (maxRecords <= 0) {
             return Collections.emptyList();
         }
-        final ArrayList<ArrayList<GuessedType>> columnarTypes = new ArrayList<>(maxRecords);
+        final ArrayList<ArrayList<GuesstimatedType>> columnarTypes = new ArrayList<>(maxRecords);
         for (int i = 0; i < maxRecords; ++i) {
             columnarTypes.add(new ArrayList<>());
         }
@@ -217,27 +141,27 @@ public final class SchemaGuess {
         return columnarTypes.stream().map(types -> this.mergeTypes(types)).collect(Collectors.toList());
     }
 
-    private GuessedType guessType(final Object value) {
+    private GuesstimatedType guessType(final Object value) {
         if (value == null) {
             return null;
         }
 
         if (value instanceof Map || value instanceof List) {
-            return GuessedType.JSON;
+            return GuesstimatedType.JSON;
         }
         final String str = value.toString();
 
         if (TRUE_STRINGS.contains(str) || FALSE_STRINGS.contains(str)) {
-            return GuessedType.BOOLEAN;
+            return GuesstimatedType.BOOLEAN;
         }
 
         if (this.timeFormatGuess.guess(Arrays.asList(str)) != null) {
-            return GuessedType.timestamp(str);
+            return GuesstimatedType.timestamp(str);
         }
 
         try {
             if (Long.valueOf(str).toString().equals(str)) {
-                return GuessedType.LONG;
+                return GuesstimatedType.LONG;
             }
         } catch (final RuntimeException ex) {
             // Pass-through.
@@ -248,7 +172,7 @@ public final class SchemaGuess {
         // * It intentionaly rejects float values when they start with "0" like "001.0", "010.01". "0.1" is ok.
         // * It doesn't support hexadecimal representation. It could be improved more later.
         if (DOUBLE_PATTERN.matcher(str).matches()) {
-            return GuessedType.DOUBLE;
+            return GuesstimatedType.DOUBLE;
         }
 
         if (str.isEmpty()) {
@@ -288,31 +212,31 @@ public final class SchemaGuess {
         try {
             final JsonNode node = new ObjectMapper().readTree(str);
             if (node.isContainerNode()) {
-                return GuessedType.JSON;
+                return GuesstimatedType.JSON;
             }
         } catch (final Exception ex) {
             // Pass-through.
         }
 
-        return GuessedType.STRING;
+        return GuesstimatedType.STRING;
     }
 
-    private GuessedType mergeTypes(final List<GuessedType> types) {
-        final GuessedType t = Optional.ofNullable(types.stream().reduce(null, (final GuessedType merged, final GuessedType type) -> {
+    private GuesstimatedType mergeTypes(final List<GuesstimatedType> types) {
+        final GuesstimatedType t = Optional.ofNullable(types.stream().reduce(null, (final GuesstimatedType merged, final GuesstimatedType type) -> {
             return mergeType(merged, type);
-        })).orElse(GuessedType.STRING);
+        })).orElse(GuesstimatedType.STRING);
         if (t.isTimestamp()) {
             final String format = this.timeFormatGuess.guess(
                     types.stream()
                             .map(type -> (type != null && type.isTimestamp()) ? type.getFormatOrTimeValue() : null)
                             .filter(type -> type != null)
                             .collect(Collectors.toList()));
-            return GuessedType.timestamp(format);
+            return GuesstimatedType.timestamp(format);
         }
         return t;
     }
 
-    private static GuessedType mergeType(final GuessedType type1, final GuessedType type2) {
+    private static GuesstimatedType mergeType(final GuesstimatedType type1, final GuesstimatedType type2) {
         if (type1 == null) {
             return type2;
         } else if (type2 == null) {
@@ -324,18 +248,18 @@ public final class SchemaGuess {
         }
     }
 
-    private static GuessedType coalesceType(final GuessedType type1, final GuessedType type2) {
-        final GuessedType[] types = { type1, type2 };
+    private static GuesstimatedType coalesceType(final GuesstimatedType type1, final GuesstimatedType type2) {
+        final GuesstimatedType[] types = { type1, type2 };
         Arrays.sort(types);
 
-        if (types[0] == GuessedType.DOUBLE && types[1] == GuessedType.LONG) {
-            return GuessedType.DOUBLE;
-        } else if (types[0] == GuessedType.BOOLEAN && types[1] == GuessedType.LONG) {
-            return GuessedType.LONG;
-        } else if (types[0] == GuessedType.LONG && types[1].isTimestamp()) {
-            return GuessedType.LONG;
+        if (types[0] == GuesstimatedType.DOUBLE && types[1] == GuesstimatedType.LONG) {
+            return GuesstimatedType.DOUBLE;
+        } else if (types[0] == GuesstimatedType.BOOLEAN && types[1] == GuesstimatedType.LONG) {
+            return GuesstimatedType.LONG;
+        } else if (types[0] == GuesstimatedType.LONG && types[1].isTimestamp()) {
+            return GuesstimatedType.LONG;
         }
-        return GuessedType.STRING;
+        return GuesstimatedType.STRING;
     }
 
     private static final Pattern DOUBLE_PATTERN = Pattern.compile(
