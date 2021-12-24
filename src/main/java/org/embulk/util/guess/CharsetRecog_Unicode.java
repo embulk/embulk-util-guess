@@ -1,4 +1,11 @@
 /*
+ * This file is based on a copy from ICU4J 57.2 with modification on :
+ * - moving its Java package to org.embulk.util.guess.
+ *
+ * It is licensed under the ICU License, which is bundled as LICENSE.icu4j.
+ */
+
+/*
  *******************************************************************************
  * Copyright (C) 1996-2013, International Business Machines Corporation and    *
  * others. All Rights Reserved.                                                *
@@ -6,7 +13,7 @@
  *
  */
 
-package com.ibm.icu.text;
+package org.embulk.util.guess;
 
 /**
  * This class matches UTF-16 and UTF-32, both big- and little-endian. The

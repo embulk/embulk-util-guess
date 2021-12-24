@@ -1,10 +1,18 @@
+/*
+ * This file is based on a copy from ICU4J 57.2 with modification on :
+ * - moving its Java package to org.embulk.util.guess, and
+ * - changing its class visibility to package-private.
+ *
+ * It is licensed under the ICU License, which is bundled as LICENSE.icu4j.
+ */
+
 /**
 *******************************************************************************
 * Copyright (C) 2005-2016, International Business Machines Corporation and    *
 * others. All Rights Reserved.                                                *
 *******************************************************************************
 */
-package com.ibm.icu.text;
+package org.embulk.util.guess;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -26,7 +34,7 @@ import java.io.Reader;
  *
  * @stable ICU 3.4
  */
-public class CharsetMatch implements Comparable<CharsetMatch> {
+class CharsetMatch implements Comparable<CharsetMatch> {
 
     
     /**

@@ -16,8 +16,6 @@
 
 package org.embulk.util.guess;
 
-import com.ibm.icu.text.CharsetDetector;
-import com.ibm.icu.text.CharsetMatch;
 import org.embulk.config.ConfigDiff;
 import org.embulk.spi.Buffer;
 import org.embulk.util.config.ConfigMapperFactory;
