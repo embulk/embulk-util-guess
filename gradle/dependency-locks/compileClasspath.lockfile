@@ -4,7 +4,6 @@
 com.fasterxml.jackson.core:jackson-annotations:2.6.7
 com.fasterxml.jackson.core:jackson-core:2.6.7
 com.fasterxml.jackson.core:jackson-databind:2.6.7
-com.ibm.icu:icu4j:54.1.1
 org.embulk:embulk-api:0.10.34
 org.embulk:embulk-util-config:0.3.1
 org.embulk:embulk-util-file:0.1.3
