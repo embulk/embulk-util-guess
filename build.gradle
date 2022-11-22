@@ -6,6 +6,10 @@ plugins {
     id "checkstyle"
 }
 
+repositories {
+    mavenCentral()
+}
+
 group = "org.embulk"
 version = "0.3.0-SNAPSHOT"
 description = "Guess helper for Embulk and Embulk plugins"
@@ -18,8 +22,14 @@ configurations {
     runtimeClasspath.resolutionStrategy.activateDependencyLocking()
 }
 
-repositories {
-    mavenCentral()
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.encoding = "UTF-8"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -38,16 +48,6 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.1"
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    options.encoding = "UTF-8"
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 javadoc {
     title = "${project.name} v${project.version}"
 
@@ -62,31 +62,6 @@ javadoc {
         links "https://dev.embulk.org/embulk-api/0.10.34/javadoc/"
         links "https://dev.embulk.org/embulk-util-config/0.3.1/javadoc/"
     }
-}
-
-test {
-    useJUnitPlatform()
-    testLogging {
-        outputs.upToDateWhen { false }
-        showStandardStreams = true
-    }
-}
-
-tasks.withType(Checkstyle) {
-    reports {
-        // Not to skip up-to-date checkstyles.
-        outputs.upToDateWhen { false }
-    }
-}
-
-checkstyle {
-    toolVersion "8.7"
-    configFile = file("${projectDir}/config/checkstyle/checkstyle.xml")
-    configProperties = [
-        "checkstyle.config.path": file("${projectDir}/config/checkstyle")
-    ]
-    ignoreFailures = false
-    maxWarnings = 0  // https://github.com/gradle/gradle/issues/881
 }
 
 jar {
@@ -167,4 +142,29 @@ publishing {
 
 signing {
     sign publishing.publications.maven
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        outputs.upToDateWhen { false }
+        showStandardStreams = true
+    }
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        // Not to skip up-to-date checkstyles.
+        outputs.upToDateWhen { false }
+    }
+}
+
+checkstyle {
+    toolVersion "8.7"
+    configFile = file("${projectDir}/config/checkstyle/checkstyle.xml")
+    configProperties = [
+        "checkstyle.config.path": file("${projectDir}/config/checkstyle")
+    ]
+    ignoreFailures = false
+    maxWarnings = 0  // https://github.com/gradle/gradle/issues/881
 }
