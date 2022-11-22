@@ -14,8 +14,8 @@ group = "org.embulk"
 version = "0.3.0-SNAPSHOT"
 description = "Guess helper for Embulk and Embulk plugins"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 configurations {
     compileClasspath.resolutionStrategy.activateDependencyLocking()
