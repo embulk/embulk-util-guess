@@ -1,8 +1,13 @@
 name: Check
-on: push
+on: [ pull_request, push ]
 jobs:
   check:
     runs-on: ubuntu-latest
+    # push: always run.
+    # pull_request: run only when the PR is submitted from a forked repository, not within this repository.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    strategy:
+      fail-fast: false
     steps:
     - uses: actions/checkout@v2
     - name: Set up OpenJDK 8
@@ -10,5 +15,6 @@ jobs:
       with:
         java-version: 8
         distribution: "temurin"
+        cache: "gradle"
     - name: Check
       run: ./gradlew --stacktrace check
