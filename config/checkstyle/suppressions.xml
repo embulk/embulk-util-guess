@@ -5,6 +5,9 @@
     "http://checkstyle.sourceforge.net/dtds/suppressions_1_2.dtd">
 
 <suppressions>
+  <suppress files="CharsetDetector\.java" checks=".*"/>
+  <suppress files="CharsetMatch\.java" checks=".*"/>
+  <suppress files="CharsetRecog.*\.java" checks=".*"/>
   <suppress checks="JavadocMethod" files=".*"/>
   <suppress checks="JavadocParagraph" files=".*"/>
   <suppress checks="JavadocTagContinuationIndentation" files=".*"/>
