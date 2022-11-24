@@ -40,7 +40,6 @@ public final class CharsetGuess {
      * Guesses a character set from {@link org.embulk.spi.Buffer}.
      *
      * @param sample  the byte sequence to be guessed
-     * @param configMapperFactory  {@link org.embulk.util.config.ConfigMapperFactory} for a new {@link org.embulk.config.ConfigDiff}
      * @return {@link org.embulk.config.ConfigDiff} guessed
      */
     public ConfigDiff guess(final Buffer sample) {
