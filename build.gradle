@@ -6,20 +6,30 @@ plugins {
     id "checkstyle"
 }
 
+repositories {
+    mavenCentral()
+}
+
 group = "org.embulk"
 version = "0.3.0-SNAPSHOT"
 description = "Guess helper for Embulk and Embulk plugins"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 configurations {
     compileClasspath.resolutionStrategy.activateDependencyLocking()
     runtimeClasspath.resolutionStrategy.activateDependencyLocking()
 }
 
-repositories {
-    mavenCentral()
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    options.encoding = "UTF-8"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -38,16 +48,6 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.1"
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    options.encoding = "UTF-8"
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
 javadoc {
     title = "${project.name} v${project.version}"
 
@@ -64,54 +64,41 @@ javadoc {
     }
 }
 
-test {
-    useJUnitPlatform()
-    testLogging {
-        outputs.upToDateWhen { false }
-        showStandardStreams = true
-    }
-}
-
-tasks.withType(Checkstyle) {
-    reports {
-        // Not to skip up-to-date checkstyles.
-        outputs.upToDateWhen { false }
-    }
-}
-
-checkstyle {
-    toolVersion "8.7"
-    configFile = file("${projectDir}/config/checkstyle/checkstyle.xml")
-    configProperties = [
-        "checkstyle.config.path": file("${projectDir}/config/checkstyle")
-    ]
-    ignoreFailures = false
-    maxWarnings = 0  // https://github.com/gradle/gradle/issues/881
-}
-
 jar {
-    from rootProject.file("LICENSE")
-    from rootProject.file("LICENSE.icu4j")
-    from rootProject.file("NOTICE")
+    metaInf {
+        from rootProject.file("LICENSE")
+        from rootProject.file("LICENSE.icu4j")
+        from rootProject.file("NOTICE")
+    }
 }
 
 sourcesJar {
-    from rootProject.file("LICENSE")
-    from rootProject.file("LICENSE.icu4j")
-    from rootProject.file("NOTICE")
+    metaInf {
+        from rootProject.file("LICENSE")
+        from rootProject.file("LICENSE.icu4j")
+        from rootProject.file("NOTICE")
+    }
 }
 
 javadocJar {
-    from rootProject.file("LICENSE")
-    from rootProject.file("LICENSE.icu4j")
-    from rootProject.file("NOTICE")
+    metaInf {
+        from rootProject.file("LICENSE")
+        from rootProject.file("LICENSE.icu4j")
+        from rootProject.file("NOTICE")
+    }
+}
+
+// It should not publish a `.module` file in Maven Central.
+// https://docs.gradle.org/current/userguide/publishing_gradle_module_metadata.html#sub:disabling-gmm-publication
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
 }
 
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = "${project.group}"
-            artifactId = "${project.name}"
+            groupId = project.group
+            artifactId = project.name
 
             from components.java
             // javadocJar and sourcesJar are added by java.withJavadocJar() and java.withSourcesJar() above.
@@ -120,8 +107,8 @@ publishing {
             pom {  // https://central.sonatype.org/pages/requirements.html
                 packaging "jar"
 
-                name = "${project.name}"
-                description = "${project.description}"
+                name = project.name
+                description = project.description
                 url = "https://www.embulk.org/"
 
                 licenses {
@@ -167,4 +154,34 @@ publishing {
 
 signing {
     sign publishing.publications.maven
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showCauses = true
+        showExceptions = true
+        showStackTraces = true
+        showStandardStreams = true
+        outputs.upToDateWhen { false }
+    }
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        // Not to skip up-to-date checkstyles.
+        outputs.upToDateWhen { false }
+    }
+}
+
+checkstyle {
+    toolVersion "8.7"
+    configFile = file("${projectDir}/config/checkstyle/checkstyle.xml")
+    configProperties = [
+        "checkstyle.config.path": file("${projectDir}/config/checkstyle")
+    ]
+    ignoreFailures = false
+    maxWarnings = 0  // https://github.com/gradle/gradle/issues/881
 }
