@@ -11,7 +11,7 @@ For Maintainers
 
 ### Release
 
-Modify `version` in `build.gradle` at a detached commit to bump up the versions of Embulk standard plugins.
+Modify `version` in `build.gradle` at a detached commit, and then tag the commit with an annotation.
 
 ```
 git checkout --detach master
@@ -25,6 +25,25 @@ git commit -m "Release vX.Y.Z"
 git tag -a vX.Y.Z
 
 (Edit: Write a tag annotation in the changelog format.)
+```
 
-git push -u origin vX.Y.Z  # Pushing a version tag would trigger a release operation on GitHub Actions after approval.
+See [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) for the changelog format. We adopt a part of it for Git's tag annotation like below.
+
+```
+## [X.Y.Z] - YYYY-MM-DD
+
+### Added
+- Added a feature.
+
+### Changed
+- Changed something.
+
+### Fixed
+- Fixed a bug.
+```
+
+Push the annotated tag, then. It triggers a release operation on GitHub Actions after approval.
+
+```
+git push -u origin vX.Y.Z
 ```
