@@ -1,5 +1,5 @@
-embulk-util-guess
-==================
+Embulk Utilities for Guess
+===========================
 
 For Embulk plugin developers
 -----------------------------
