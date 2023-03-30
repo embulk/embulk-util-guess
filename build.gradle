@@ -34,19 +34,21 @@ java {
 }
 
 dependencies {
-    compileOnly "org.embulk:embulk-api:0.10.37"
-    api "org.embulk:embulk-util-config:0.3.2"
-    api "org.embulk:embulk-util-file:0.1.3"
-    api "org.embulk:embulk-util-text:0.1.1"
-    implementation "com.fasterxml.jackson.core:jackson-annotations:2.6.7"
-    implementation "com.fasterxml.jackson.core:jackson-core:2.6.7"
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.6.7"
+    compileOnly "org.embulk:embulk-spi:0.10.44"
+    compileOnly "org.slf4j:slf4j-api:2.0.6"
 
-    testImplementation "org.embulk:embulk-api:0.10.37"
+    api "org.embulk:embulk-util-config:0.3.3"
+    api "org.embulk:embulk-util-file:0.1.4"
+    api "org.embulk:embulk-util-text:0.1.2"
+    api "com.fasterxml.jackson.core:jackson-annotations:2.6.7"
+    api "com.fasterxml.jackson.core:jackson-core:2.6.7"
+    api "com.fasterxml.jackson.core:jackson-databind:2.6.7.5"
+
+    testImplementation "org.embulk:embulk-spi:0.10.44"
     testImplementation "org.embulk:embulk-util-rubytime:0.3.2"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.1"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.9.1"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.1"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.9.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
 }
 
 javadoc {
@@ -60,8 +62,8 @@ javadoc {
         encoding = "UTF-8"
         overview = "src/main/html/overview.html"
         links "https://docs.oracle.com/javase/8/docs/api/"
-        links "https://dev.embulk.org/embulk-api/0.10.37/javadoc/"
-        links "https://dev.embulk.org/embulk-util-config/0.3.2/javadoc/"
+        links "https://dev.embulk.org/embulk-spi/0.10.44/javadoc/"
+        links "https://dev.embulk.org/embulk-util-config/0.3.3/javadoc/"
     }
 }
 
@@ -132,6 +134,20 @@ publishing {
                     connection = "scm:git:git://github.com/embulk/embulk-util-guess.git"
                     developerConnection = "scm:git:git@github.com:embulk/embulk-util-guess.git"
                     url = "https://github.com/embulk/embulk-util-guess"
+                }
+
+                withXml {
+                    if (asNode().getAt("dependencies").isEmpty()) {
+                        asNode().appendNode("dependencies")
+                    }
+                    project.configurations.compileOnly.allDependencies.each { dependency ->
+                        asNode().dependencies[0].appendNode("dependency").with {
+                            it.appendNode("groupId", dependency.group)
+                            it.appendNode("artifactId", dependency.name)
+                            it.appendNode("version", dependency.version)
+                            it.appendNode("scope", "provided")
+                        }
+                    }
                 }
             }
         }
