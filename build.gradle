@@ -11,7 +11,7 @@ repositories {
 }
 
 group = "org.embulk"
-version = "0.3.2-SNAPSHOT"
+version = "0.3.2"
 description = "Guess helper for Embulk and Embulk plugins"
 
 configurations {
