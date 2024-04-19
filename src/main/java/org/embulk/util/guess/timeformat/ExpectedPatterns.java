@@ -49,12 +49,12 @@ public final class ExpectedPatterns {
 
         new Rfc2822Pattern(),
 
-        /**
+        /*
          * <pre>{@code RegexpPattern.new(StandardPatterns::APACHE_CLF, "%d/%b/%Y:%H:%M:%S %z")}</pre>
          */
         new RegexpPattern(APACHE_CLF, "%d/%b/%Y:%H:%M:%S %z"),
 
-        /**
+        /*
          * <pre>{@code RegexpPattern.new(StandardPatterns::ANSI_C_ASCTIME, "%a %b %e %H:%M:%S %Y")}</pre>
          */
         new RegexpPattern(ANSI_C_ASCTIME, "%a %b %e %H:%M:%S %Y"),

@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 /**
  * Matches a string with prepared regular expressions for times, and captures some pieces of strings from the given string.
  */
+@SuppressWarnings("checkstyle:LineLength")
 final class GuessTimePicker {
     private GuessTimePicker(
             final String dateTimeDelim,
@@ -157,16 +158,14 @@ final class GuessTimePicker {
      */
     private static final String FRAC = "[0-9]{1,9}";
 
-    @SuppressWarnings("checkstyle:LineLength")
     /**
-     * <pre>{@code TIME         = /(?<hour>#{HOUR})(?:(?<time_delim>#{time_delims})(?<minute>#{MINUTE})(?:\k<time_delim>(?<second>#{SECOND})(?:(?<frac_delim>#{frac_delims})(?<frac>#{frac}))?)?)?/}</pre>
+     * <pre>{@code TIME = /(?<hour>#{HOUR})(?:(?<time_delim>#{time_delims})(?<minute>#{MINUTE})(?:\k<time_delim>(?<second>#{SECOND})(?:(?<frac_delim>#{frac_delims})(?<frac>#{frac}))?)?)?/}</pre>
      */
     private static final String TIME = String.format(
             "(?<hour>%s)(?:(?<timeDelim>%s)(?<minute>%s)"
             + "(?:\\k<timeDelim>(?<second>%s)(?:(?<fracDelim>%s)(?<frac>%s))?)?)?",
             Parts.HOUR, TIME_DELIMS, Parts.MINUTE, Parts.SECOND, FRAC_DELIMS, FRAC);
 
-    @SuppressWarnings("checkstyle:LineLength")
     /**
      * <pre>{@code TIME_NODELIM = /(?<hour>#{HOUR_NODELIM})(?:(?<minute>#{MINUTE_NODELIM})((?<second>#{SECOND_NODELIM})(?:(?<frac_delim>#{frac_delims})(?<frac>#{frac}))?)?)?/}</pre>
      */

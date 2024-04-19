@@ -152,6 +152,7 @@ public class TestTimeFormatGuess {
         assertGuess("%d/%b/%Y:%H:%M:%S %z", "07/Mar/2004:16:05:50 -0800");
     }
 
+    @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
     @Test
     public void testFormatAnsiCAsctime() {
         assertGuess("%a %b %e %H:%M:%S %Y", "Fri May 11 21:44:53 2001");
