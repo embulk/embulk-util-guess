@@ -59,7 +59,6 @@ javadoc {
     options {
         locale = "en_US"
         encoding = "UTF-8"
-        overview = "src/main/html/overview.html"
         links "https://docs.oracle.com/javase/8/docs/api/"
         links "https://dev.embulk.org/embulk-spi/${libs.versions.embulk.spi.get()}/javadoc/"
         links "https://dev.embulk.org/embulk-util-config/${libs.versions.embulk.util.config.get()}/javadoc/"
