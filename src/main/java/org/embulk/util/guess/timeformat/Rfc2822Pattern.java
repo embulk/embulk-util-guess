@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 /**
  * @see <a href="https://github.com/embulk/embulk/blob/v0.10.19/embulk-core/src/main/ruby/embulk/guess/time_format_guess.rb#L331-L360">time_format_guess.rb</a>
  */
+@SuppressWarnings("checkstyle:LineLength")
 final class Rfc2822Pattern implements TimeFormatPattern {
     Rfc2822Pattern() {}
 
@@ -62,7 +63,6 @@ final class Rfc2822Pattern implements TimeFormatPattern {
         return null;
     }
 
-    @SuppressWarnings("checkstyle:LineLength")
     /**
      * The regular expression of the RFC 2822 pattern.
      *
