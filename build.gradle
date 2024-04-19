@@ -41,6 +41,7 @@ dependencies {
     api libs.embulk.util.config
     api libs.embulk.util.file
     api libs.embulk.util.text
+    api platform(libs.jackson.bom)
     api libs.bundles.jackson
 
     testImplementation libs.embulk.spi
